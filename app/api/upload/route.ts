@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
     const timestamp = Date.now()
     const randomString = Math.random().toString(36).substring(2, 15)
     const fileExtension = file.name.split('.').pop()?.toLowerCase() || 'jpg'
-    const filename = `event-banners/${timestamp}-${randomString}.${fileExtension}`
+  const filename = `${timestamp}-${randomString}.${fileExtension}`
 
     console.log("Generated filename:", filename)
 
@@ -72,9 +72,9 @@ export async function POST(request: NextRequest) {
         console.log("Buffer size:", fileBuffer.byteLength)
 
         // Upload to Supabase Storage using service role (bypasses RLS for now)
-        console.log("Uploading to Supabase Storage...")
+        console.log("Uploading to Supabase Storage (root)...")
         const { data, error } = await supabase.storage
-          .from("images")
+          .from("Event Banner")
           .upload(filename, fileBuffer, {
             contentType: file.type,
             cacheControl: "3600",
@@ -95,17 +95,17 @@ export async function POST(request: NextRequest) {
 
         // Check if file exists in bucket after upload
         const { data: fileCheck, error: checkError } = await supabase.storage
-          .from("images")
-          .list("event-banners", { limit: 100 })
+          .from("Event Banner")
+          .list("", { limit: 100 })
         if (checkError) {
           console.error("Error listing files in bucket:", checkError)
         } else {
           console.log("Files in bucket after upload:", fileCheck)
         }
 
-        // Get the public URL
-        const publicResult = supabase.storage.from("images").getPublicUrl(filename)
-        const publicUrl = publicResult?.data?.publicUrl || null
+  // Get the public URL
+  const publicResult = supabase.storage.from("Event Banner").getPublicUrl(filename)
+  const publicUrl = publicResult?.data?.publicUrl || null
         if (!publicUrl) {
           console.error("Failed to retrieve public URL for uploaded image")
         }
