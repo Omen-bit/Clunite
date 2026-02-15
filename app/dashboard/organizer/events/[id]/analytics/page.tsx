@@ -164,18 +164,17 @@ export default async function EventAnalyticsPage({ params }: { params: { id: str
   }
 
   // Calculate KPI metrics from real data
+  // Count 1 per registration. If solo, 1; if team, also 1.
   const totalRegistrations = registrations.reduce((total, reg) => {
     if (reg.registration_data) {
       if (reg.registration_data.team_members) {
-        // For team registrations, count all team members
-        return total + reg.registration_data.team_members.length;
+        return total + 1
       } else if (reg.registration_data.participant_details) {
-        // For solo registrations, count as 1
-        return total + 1;
+        return total + 1
       }
     }
-    return total;
-  }, 0);
+    return total
+  }, 0)
 
   const registrationRate = event.max_participants ? (totalRegistrations / event.max_participants) * 100 : 0
   const revenue = event.entry_fee ? totalRegistrations * event.entry_fee : 0

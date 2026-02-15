@@ -453,15 +453,15 @@ export default function AnalyticsPage() {
       <div className="max-w-[1600px] mx-auto p-6 space-y-8">
         {/* Enhanced Header with Better Visual Hierarchy */}
         <div className="relative">
-          <div className="bg-gradient-to-r from-purple-600 via-fuchsia-600 to-rose-500 rounded-3xl p-8 text-white relative overflow-hidden shadow-2xl">
-            <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-20 translate-x-20 blur-xl"></div>
-            <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-16 -translate-x-16 blur-xl"></div>
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+          <div className="bg-gradient-to-br from-teal-400 via-emerald-500 to-cyan-600 rounded-3xl p-8 text-white relative overflow-hidden shadow-2xl">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-20 translate-x-20 backdrop-blur-xl"></div>
+            <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-r from-cyan-400 to-teal-400 opacity-20 rounded-full translate-y-20 -translate-x-20 blur-2xl"></div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl"></div>
 
             <div className="relative z-10">
               <Link
                 href="/dashboard/organizer/host"
-                className="inline-flex items-center text-purple-100 hover:text-white mb-6 transition-all duration-300 hover:-translate-x-1 hover:scale-105"
+                className="inline-flex items-center text-emerald-100 hover:text-white mb-6 transition-all duration-300 hover:-translate-x-1 hover:scale-105 backdrop-blur-sm bg-white/10 px-4 py-2 rounded-lg"
               >
                 <ArrowLeft className="h-5 w-5 mr-2" />
                 Back to Event Hub
@@ -470,20 +470,20 @@ export default function AnalyticsPage() {
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                 <div className="space-y-4">
                   <div className="flex items-center space-x-4">
-                    <div className="w-16 h-16 bg-gradient-to-br from-purple-500/30 to-fuchsia-500/30 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-white/10">
+                    <div className="w-16 h-16 bg-gradient-to-br from-teal-400/30 to-cyan-400/30 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-white/10">
                       <BarChart3 className="h-8 w-8 text-white" />
                     </div>
                     <div>
-                      <h1 className="text-4xl lg:text-5xl font-black font-heading leading-tight">
+                      <h1 className="text-4xl lg:text-5xl font-black font-heading leading-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-emerald-100">
                         Analytics Dashboard
                       </h1>
                       <div className="flex items-center space-x-2 mt-2">
-                        <Sparkles className="h-4 w-4 text-fuchsia-300" />
-                        <span className="text-fuchsia-100 text-lg font-medium">Advanced Insights & Performance</span>
+                        <Sparkles className="h-4 w-4 text-cyan-200" />
+                        <span className="text-emerald-100 text-lg font-medium">Advanced Insights & Performance</span>
                       </div>
                     </div>
                   </div>
-                  <p className="text-purple-100 text-xl leading-relaxed max-w-2xl">
+                  <p className="text-emerald-50 text-xl leading-relaxed max-w-2xl backdrop-blur-sm">
                     Comprehensive insights into your event performance, participant engagement, and business metrics
                     with real-time analytics
                   </p>
@@ -491,11 +491,11 @@ export default function AnalyticsPage() {
 
                 <div className="flex flex-col space-y-4">
                   <div className="flex items-center space-x-3">
-                    <Badge className="bg-gradient-to-r from-purple-500/20 to-fuchsia-500/20 text-white border-purple-300/30 px-4 py-2 text-sm font-semibold backdrop-blur-sm hover:from-purple-500/30 hover:to-fuchsia-500/30 transition-all duration-300">
+                    <Badge className="bg-gradient-to-r from-teal-400/20 to-emerald-400/20 text-white border-emerald-300/30 px-4 py-2 text-sm font-semibold backdrop-blur-md hover:from-teal-400/30 hover:to-emerald-400/30 transition-all duration-300">
                       <Calendar className="h-4 w-4 mr-2" />
                       {totalEvents} Events
                     </Badge>
-                    <Badge className="bg-gradient-to-r from-fuchsia-500/20 to-rose-500/20 text-white border-fuchsia-300/30 px-4 py-2 text-sm font-semibold backdrop-blur-sm hover:from-fuchsia-500/30 hover:to-rose-500/30 transition-all duration-300">
+                    <Badge className="bg-gradient-to-r from-emerald-400/20 to-cyan-400/20 text-white border-cyan-300/30 px-4 py-2 text-sm font-semibold backdrop-blur-md hover:from-emerald-400/30 hover:to-cyan-400/30 transition-all duration-300">
                       <Users className="h-4 w-4 mr-2" />
                       {totalParticipants.toLocaleString()} Participants
                     </Badge>

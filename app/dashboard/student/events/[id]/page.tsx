@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import { EventImage } from "@/components/EventImage"
 import {
   Calendar,
   Clock,
@@ -78,7 +79,7 @@ export default function EventDetailsPage({ params }: { params: { id: string } })
     // Additional info
     specialRequirements: "",
     dietaryRestrictions: "",
-    emergencyContact: "",
+    branch: "",
   })
 
   useEffect(() => {
@@ -354,7 +355,7 @@ export default function EventDetailsPage({ params }: { params: { id: string } })
           additional_info: {
             specialRequirements: registrationData.specialRequirements?.trim(),
             dietaryRestrictions: registrationData.dietaryRestrictions?.trim(),
-            emergencyContact: registrationData.emergencyContact?.trim(),
+            branch: registrationData.branch?.trim(),
           }
         },
       }
@@ -1155,13 +1156,13 @@ export default function EventDetailsPage({ params }: { params: { id: string } })
                       placeholder="e.g., 2nd Year, Final Year"
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="emergency">Emergency Contact</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="branch">Branch</Label>
                     <Input
-                      id="emergency"
-                      value={registrationData.emergencyContact}
-                      onChange={(e) => setRegistrationData((prev) => ({ ...prev, emergencyContact: e.target.value }))}
-                      placeholder="Emergency contact number"
+                      id="branch"
+                      value={registrationData.branch}
+                      onChange={(e) => setRegistrationData((prev) => ({ ...prev, branch: e.target.value }))}
+                      placeholder="Your branch/department"
                     />
                   </div>
                 </div>

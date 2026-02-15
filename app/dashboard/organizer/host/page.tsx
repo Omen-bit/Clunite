@@ -142,6 +142,7 @@ export default function HostEventPage() {
                     className={`w-12 h-12 bg-gradient-to-r ${stat.color} rounded-2xl flex items-center justify-center`}
                   >
                     <stat.icon className="h-6 w-6 text-white" />
+        
                   </div>
                   <span className={`text-sm font-medium ${
                     stat.trend.startsWith('+') ? 'text-green-600' : 'text-red-600'
@@ -277,52 +278,67 @@ export default function HostEventPage() {
               </Link>
             </CardContent>
           </Card>
+
+          {/* Event Participants Dashboard Card */}
+          <Card
+            className="border-0 shadow-xl hover:shadow-2xl transition-all duration-500 group cursor-pointer overflow-hidden relative"
+            onMouseEnter={() => setHoveredCard("participants")}
+            onMouseLeave={() => setHoveredCard(null)}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-indigo-500/5 to-violet-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <CardHeader className="pb-6 relative">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-3xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <Users className="h-8 w-8 text-white" />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Badge className="bg-blue-50 text-blue-700 border-blue-200 px-4 py-2 font-semibold">
+                    Participants
+                  </Badge>
+                  <Link href="/dashboard/student">
+                    <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
+                      <Users className="h-4 w-4 mr-1" />
+                      Back to Dashboard
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+              <CardTitle className="text-2xl font-black font-heading text-foreground group-hover:text-orange-600 transition-colors">
+                Event Participants Dashboard
+              </CardTitle>
+              <CardDescription className="text-base text-muted-foreground leading-relaxed">
+                Access your event participation details in one place. Monitor registrations, track attendance, and manage participant interactions effectively.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6 relative">
+              <div className="space-y-4">
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <Users className="h-4 w-4 mr-2 text-blue-500" />
+                  <span>Comprehensive participant management</span>
+                </div>
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <Calendar className="h-4 w-4 mr-2 text-indigo-500" />
+                  <span>Event-wise registration tracking</span>
+                </div>
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <Award className="h-4 w-4 mr-2 text-violet-500" />
+                  <span>Attendance & participation records</span>
+                </div>
+              </div>
+
+              <Link href="/dashboard/organizer" className="block">
+                <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+                  <Users className="h-5 w-5 mr-2" />
+                  View Participants
+                  <ArrowRight
+                    className={`h-5 w-5 ml-2 transition-transform duration-300 ${hoveredCard === "participants" ? "translate-x-1" : ""}`}
+                  />
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Recent Activity */}
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-fuchsia-50">
-          <CardHeader>
-            <CardTitle className="text-xl font-bold font-heading text-purple-900">Recent Activity</CardTitle>
-            <CardDescription className="text-purple-600">Your latest event management activities</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {[
-                { action: "Created", event: "AI Workshop 2024", time: "2 hours ago", status: "published" },
-                { action: "Updated", event: "Hackathon Finals", time: "1 day ago", status: "draft" },
-                { action: "Completed", event: "Design Thinking Session", time: "3 days ago", status: "completed" },
-              ].map((activity, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between p-4 border border-border rounded-2xl hover:shadow-md transition-all duration-300"
-                >
-                  <div className="flex items-center space-x-4">
-                    <div className="w-10 h-10 bg-gradient-to-r from-slate-100 to-slate-200 rounded-xl flex items-center justify-center">
-                      <Calendar className="h-5 w-5 text-slate-600" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-foreground">
-                        {activity.action} "{activity.event}"
-                      </p>
-                      <p className="text-sm text-muted-foreground">{activity.time}</p>
-                    </div>
-                  </div>
-                  <Badge
-                    className={`${
-                      activity.status === "published"
-                        ? "bg-green-50 text-green-700 border-green-200"
-                        : activity.status === "draft"
-                          ? "bg-yellow-50 text-yellow-700 border-yellow-200"
-                          : "bg-blue-50 text-blue-700 border-blue-200"
-                    } px-3 py-1 font-medium`}
-                  >
-                    {activity.status}
-                  </Badge>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   )

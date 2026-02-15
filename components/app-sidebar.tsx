@@ -106,13 +106,13 @@ export function AppSidebar() {
       <SidebarContent className="px-4 py-6">
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-2">
+            <SidebarMenu className="space-y-3">
               {menuItems.map((item, index) => (
                 <SidebarMenuItem key={item.title} className="relative">
                   <SidebarMenuButton
                     asChild
                     isActive={pathname === item.url}
-                    className={`w-full rounded-xl px-4 py-3 transition-all duration-300 group relative overflow-hidden ${
+                    className={`w-full rounded-xl px-3 py-5 transition-all duration-300 group relative overflow-hidden ${
                       pathname === item.url
                         ? "bg-gradient-to-r from-slate-100 to-purple-50 dark:from-slate-800 dark:to-purple-900/20 text-slate-900 dark:text-white font-semibold border border-slate-200 dark:border-slate-700"
                         : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"
@@ -124,7 +124,7 @@ export function AppSidebar() {
                       className={`flex items-center ${isCollapsed ? "justify-center" : "space-x-4"} w-full relative z-10`}
                     >
                       <div
-                        className={`p-2.5 rounded-xl transition-all duration-300 ${
+                        className={`p-2 rounded-xl transition-all duration-300 ${
                           pathname === item.url
                             ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg"
                             : "bg-slate-200/50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 group-hover:bg-slate-200 dark:group-hover:bg-slate-700"
@@ -142,7 +142,7 @@ export function AppSidebar() {
 
                   {/* Active indicator */}
                   {pathname === item.url && (
-                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-indigo-600 to-purple-600 rounded-l-full"></div>
+                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-8"></div>
                   )}
                 </SidebarMenuItem>
               ))}

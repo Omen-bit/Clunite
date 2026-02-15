@@ -45,6 +45,14 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Brand palettes */
+  --brand-student-from: 195 80% 45%; /* teal */
+  --brand-student-to: 260 75% 55%;   /* indigo */
+    --brand-organizer-from: 18 90% 57%; /* orange */
+    --brand-organizer-to: 340 82% 60%;  /* fuchsia */
+    --brand-admin-from: 199 89% 48%;    /* cyan */
+    --brand-admin-to: 160 84% 39%;      /* emerald */
   }
   .dark {
     --background: 0 0% 3.9%;
@@ -79,6 +87,14 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Brand palettes (dark can be slightly deeper) */
+  --brand-student-from: 195 82% 50%; /* teal (dark) */
+  --brand-student-to: 260 75% 58%;   /* indigo (dark) */
+    --brand-organizer-from: 18 95% 62%;
+    --brand-organizer-to: 340 88% 65%;
+    --brand-admin-from: 199 93% 55%;
+    --brand-admin-to: 160 90% 45%;
   }
 }
 
@@ -88,5 +104,30 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Brand gradient utilities */
+@layer utilities {
+  .bg-brand-student {
+    background-image: linear-gradient(
+      to right,
+      hsl(var(--brand-student-from)),
+      hsl(var(--brand-student-to))
+    );
+  }
+  .bg-brand-organizer {
+    background-image: linear-gradient(
+      to right,
+      hsl(var(--brand-organizer-from)),
+      hsl(var(--brand-organizer-to))
+    );
+  }
+  .bg-brand-admin {
+    background-image: linear-gradient(
+      to right,
+      hsl(var(--brand-admin-from)),
+      hsl(var(--brand-admin-to))
+    );
   }
 }

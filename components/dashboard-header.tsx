@@ -32,7 +32,7 @@ export function DashboardHeader() {
         {/* Right side - Actions */}
         <div className="flex items-center space-x-4">
           {/* Host Event Button */}
-          <Link href="/dashboard/organizer/host">
+          <Link href="/dashboard/organizer/host/verify" prefetch>
             <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
               <Plus className="h-4 w-4 mr-2" />
               Host Event

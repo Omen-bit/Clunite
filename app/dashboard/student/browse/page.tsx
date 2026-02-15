@@ -13,6 +13,22 @@ interface EventWithClub extends Event {
   club?: Club
 }
 
+// Helper function for status colors
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case 'published':
+      return 'bg-green-100 text-green-800 border-green-200'
+    case 'draft':
+      return 'bg-yellow-100 text-yellow-800 border-yellow-200'
+    case 'cancelled':
+      return 'bg-red-100 text-red-800 border-red-200'
+    case 'completed':
+      return 'bg-blue-100 text-blue-800 border-blue-200'
+    default:
+      return 'bg-gray-100 text-gray-800 border-gray-200'
+  }
+}
+
 export default function BrowseEventsPage() {
   const [events, setEvents] = useState<EventWithClub[]>([])
   const [filteredEvents, setFilteredEvents] = useState<EventWithClub[]>([])
@@ -290,20 +306,17 @@ export default function BrowseEventsPage() {
                           `/placeholder.svg?height=200&width=400&query=${encodeURIComponent(event.title) || "/placeholder.svg"}`
                         }
                         alt={event.title}
-                        className="w-full h-48 object-cover rounded-t-lg"
+                        className="w-full h-48 object-cover"
                       />
-                      <div className="absolute top-4 left-4">
-                        <Badge className={`${urgency.color} text-white border-0 font-semibold`}>{urgency.text}</Badge>
-                      </div>
                       <div className="absolute top-4 right-4">
+                        <Badge className={getStatusColor(event.status)}>
+                          {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
+                        </Badge>
+                      </div>
+                      <div className="absolute top-4 left-4">
                         <Badge variant="secondary" className="bg-white/90 text-gray-700">
                           {event.type.charAt(0).toUpperCase() + event.type.slice(1)}
                         </Badge>
-                      </div>
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300 rounded-t-lg flex items-center justify-center">
-                        <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 bg-white/90 rounded-full p-3">
-                          <ExternalLink className="h-6 w-6 text-gray-700" />
-                        </div>
                       </div>
                     </div>
 

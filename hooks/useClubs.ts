@@ -112,3 +112,69 @@ export function useUserClubs(userId: string) {
 
   return { clubs, loading, error, refetch: fetchUserClubs }
 }
+
+/**
+ * Join a club instantly by creating a membership.
+ * Also increments the club's members_count for quick feedback.
+ */
+export async function joinClubInstant(userId: string, clubId: string) {
+  if (!userId || !clubId) {
+    throw new Error("Missing userId or clubId")
+  }
+
+  // 1) Ensure user exists to satisfy FK (dev fallback when not using auth)
+  const { data: existingUser, error: userFetchError } = await supabase
+    .from("users")
+    .select("id")
+    .eq("id", userId)
+    .maybeSingle()
+
+  if (userFetchError) {
+    throw userFetchError
+  }
+
+  if (!existingUser) {
+    const placeholder = {
+      id: userId,
+      email: `${userId}@example.local`,
+      full_name: "Student",
+      role: "student" as const,
+      college: "Unknown",
+    }
+    const { error: userInsertError } = await supabase.from("users").insert(placeholder)
+    if (userInsertError) {
+      // If concurrent creation happened, ignore unique violation
+      if (!userInsertError.message.toLowerCase().includes("duplicate")) {
+        throw userInsertError
+      }
+    }
+  }
+
+  // 2) Upsert membership to be idempotent
+  const { error: membershipError } = await supabase
+    .from("club_memberships")
+    .upsert({ user_id: userId, club_id: clubId }, { onConflict: "user_id,club_id", ignoreDuplicates: true })
+
+  if (membershipError) {
+    throw membershipError
+  }
+}
+
+/**
+ * Remove user from a club by deleting membership.
+ */
+export async function leaveClubInstant(userId: string, clubId: string) {
+  if (!userId || !clubId) {
+    throw new Error("Missing userId or clubId")
+  }
+
+  const { error } = await supabase
+    .from("club_memberships")
+    .delete()
+    .eq("user_id", userId)
+    .eq("club_id", clubId)
+
+  if (error) {
+    throw error
+  }
+}

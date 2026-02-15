@@ -96,3 +96,53 @@ export function useClubEvents(clubId: string) {
     refetch: fetchClubEvents,
   }
 }
+
+export function useEventsForClubIds(clubIds: string[]) {
+  const [events, setEvents] = useState<EventWithClub[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  const fetchEvents = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      if (!clubIds || clubIds.length === 0) {
+        setEvents([])
+        return
+      }
+
+      const { data, error: fetchError } = await supabase
+        .from("events")
+        .select(`
+          *,
+          club:clubs(*)
+        `)
+        .in("club_id", clubIds)
+        .eq("status", "published")
+        .order("start_date", { ascending: true })
+
+      if (fetchError) throw fetchError
+
+      setEvents(data || [])
+    } catch (err) {
+      console.error("Error fetching events for club ids:", err)
+      setError(err instanceof Error ? err.message : "An error occurred")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchEvents()
+    // We want to refetch whenever the set of clubIds changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(clubIds)])
+
+  return {
+    events,
+    loading,
+    error,
+    refetch: fetchEvents,
+  }
+}

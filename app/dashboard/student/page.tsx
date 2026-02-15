@@ -104,7 +104,7 @@ export default function StudentDashboard() {
   return (
     <div className="space-y-8 bg-gray-50 min-h-screen p-6">
       {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-2xl p-8 text-white relative overflow-hidden">
+  <div className="bg-gradient-to-r from-teal-400 to-indigo-600 rounded-2xl p-8 text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
         <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-12 -translate-x-12"></div>
         <div className="relative">
@@ -112,7 +112,7 @@ export default function StudentDashboard() {
             <h1 className="text-3xl font-bold">Welcome back, {user.name}! </h1>
             <span className="text-2xl ml-2">👋</span>
           </div>
-          <p className="text-indigo-100 text-lg">Ready to discover amazing events at {user.college}?</p>
+          <p className="text-white/90 text-lg">Ready to discover amazing events at {user.college}?</p>
           <div className="mt-6 flex items-center space-x-4">
             <Badge className="bg-white/20 text-white border-white/30 px-3 py-1">
               <Sparkles className="h-4 w-4 mr-1" />5 new recommendations

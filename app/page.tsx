@@ -279,7 +279,7 @@ export default function LandingPage() {
                   Sign In
                 </Button>
               </Link>
-              <Link href="/dashboard/organizer/host">
+              <Link href="/dashboard/student">
                 <Button className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-700 hover:via-purple-700 hover:to-pink-700 text-white px-8 py-3 rounded-2xl font-bold shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 relative overflow-hidden group">
                   <div className="absolute inset-0 bg-gradient-to-r from-white/20 via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-x-[-100%] group-hover:translate-x-[100%]"></div>
                   <span className="relative z-10 flex items-center">
@@ -345,7 +345,7 @@ export default function LandingPage() {
                     Sign In
                   </Button>
                 </Link>
-                <Link href="/dashboard/organizer/host" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link href="/dashboard/student" onClick={() => setIsMobileMenuOpen(false)}>
                   <Button className="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-700 hover:via-purple-700 hover:to-pink-700 text-white py-4 rounded-2xl font-bold shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-105">
                     Get Started Free
                   </Button>
@@ -405,7 +405,7 @@ export default function LandingPage() {
                 <ArrowRight className="ml-3 h-6 w-6" />
               </Button>
             </Link>
-            <Link href="/dashboard/organizer/host">
+            <Link href="/dashboard/organizer/host/verify">
               <Button
                 size="lg"
                 variant="outline"
@@ -665,7 +665,7 @@ export default function LandingPage() {
                 Start Exploring
               </Button>
             </Link>
-            <Link href="/dashboard/organizer/host">
+            <Link href="/dashboard/student">
               <Button
                 size="lg"
                 variant="outline"

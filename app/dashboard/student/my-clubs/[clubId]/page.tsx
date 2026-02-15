@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Skeleton } from "@/components/ui/skeleton"
-import { useClub } from "@/hooks/useClubs"
+import { useClub, joinClubInstant, leaveClubInstant } from "@/hooks/useClubs"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 
@@ -15,8 +15,10 @@ export default function ClubProfilePage() {
   const params = useParams()
   const router = useRouter()
   const clubId = params.clubId as string
-  const { club, events, loading, error } = useClub(clubId)
+  const { club, events, loading, error, refetch } = useClub(clubId)
   const [activeTab, setActiveTab] = useState("overview")
+  const [joining, setJoining] = useState(false)
+  const [leaving, setLeaving] = useState(false)
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -138,15 +140,15 @@ export default function ClubProfilePage() {
               <div className="flex flex-wrap items-center gap-6 text-slate-700">
                 <div className="flex items-center space-x-2">
                   <Users className="h-5 w-5" />
-                  <span className="font-semibold">{club.member_count} members</span>
+                  <span className="font-semibold">{club.members_count} members</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Calendar className="h-5 w-5" />
-                  <span className="font-semibold">{club.event_count} events hosted</span>
+                  <span className="font-semibold">{club.events_hosted_count} events hosted</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Star className="h-5 w-5 text-yellow-500 fill-current" />
-                  <span className="font-semibold">{club.rating} rating</span>
+                  <span className="font-semibold">{club.credibility_score?.toFixed?.(1) ?? "0.0"} rating</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <MapPin className="h-5 w-5" />
@@ -157,9 +159,39 @@ export default function ClubProfilePage() {
 
             {/* Action Buttons */}
             <div className="flex flex-col space-y-3">
-              <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold px-8">
+              <Button
+                className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold px-8"
+                disabled={joining}
+                onClick={async () => {
+                  try {
+                    setJoining(true)
+                    // TODO: replace with real current user id from auth
+                    const CURRENT_USER_ID = "550e8400-e29b-41d4-a716-446655440001"
+                    await joinClubInstant(CURRENT_USER_ID, clubId)
+                  } finally {
+                    setJoining(false)
+                    await refetch()
+                  }
+                }}
+              >
                 <Plus className="mr-2 h-4 w-4" />
-                Join Club
+                {joining ? "Joining..." : "Join Club"}
+              </Button>
+              <Button
+                variant="outline"
+                disabled={leaving}
+                onClick={async () => {
+                  try {
+                    setLeaving(true)
+                    const CURRENT_USER_ID = "550e8400-e29b-41d4-a716-446655440001"
+                    await leaveClubInstant(CURRENT_USER_ID, clubId)
+                  } finally {
+                    setLeaving(false)
+                    await refetch()
+                  }
+                }}
+              >
+                {leaving ? "Removing..." : "Remove"}
               </Button>
               <Button variant="outline" className="bg-white/90 hover:bg-white">
                 <Share2 className="mr-2 h-4 w-4" />
@@ -314,7 +346,10 @@ export default function ClubProfilePage() {
                   className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-slate-200 hover:border-indigo-200 hover:-translate-y-1"
                 >
                   <CardHeader className="p-0 relative overflow-hidden">
-                    <div className="h-40 bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-50 flex items-center justify-center relative">
+                    <div className="h-40 bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-50 flex items-center justify-center relative overflow-hidden">
+                      {event.image_url && (
+                        <img src={event.image_url} alt={event.title} className="absolute inset-0 w-full h-full object-cover opacity-80" />
+                      )}
                       <div className="text-5xl opacity-20">
                         {event.type === "competition"
                           ? "🏆"

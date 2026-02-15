@@ -8,16 +8,22 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Skeleton } from "@/components/ui/skeleton"
-import { useClubs, useUserClubs } from "@/hooks/useClubs"
+import { useClubs, useUserClubs, joinClubInstant, leaveClubInstant } from "@/hooks/useClubs"
+import { useEventsForClubIds } from "@/hooks/useEvents"
 import Link from "next/link"
 
 // Mock user ID - in real app, this would come from auth
 const CURRENT_USER_ID = "550e8400-e29b-41d4-a716-446655440001"
 
 export default function MyClubsPage() {
-  const { clubs: allClubs, loading: allClubsLoading } = useClubs()
-  const { clubs: userClubs, loading: userClubsLoading } = useUserClubs(CURRENT_USER_ID)
+  const { clubs: allClubs, loading: allClubsLoading, refetch: refetchAllClubs } = useClubs()
+  const { clubs: userClubs, loading: userClubsLoading, refetch: refetchUserClubs } = useUserClubs(CURRENT_USER_ID)
   const [searchTerm, setSearchTerm] = useState("")
+  const [joiningClubId, setJoiningClubId] = useState<string | null>(null)
+  const [tabValue, setTabValue] = useState("joined")
+
+  const joinedClubIds = userClubs.map((c) => c.id)
+  const { events: joinedClubsEvents, loading: eventsLoading, refetch: refetchJoinedEvents } = useEventsForClubIds(joinedClubIds)
 
   // Filter clubs based on search
   const filteredUserClubs = userClubs.filter(
@@ -68,16 +74,16 @@ export default function MyClubsPage() {
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-1">
               <Users className="h-4 w-4" />
-              <span>{club.member_count} members</span>
+              <span>{club.members_count} members</span>
             </div>
             <div className="flex items-center space-x-1">
               <Calendar className="h-4 w-4" />
-              <span>{club.event_count} events</span>
+              <span>{club.events_hosted_count} events</span>
             </div>
           </div>
           <div className="flex items-center space-x-1">
             <Star className="h-4 w-4 text-yellow-500 fill-current" />
-            <span className="font-semibold">{club.rating}</span>
+            <span className="font-semibold">{club.credibility_score?.toFixed?.(1) ?? "0.0"}</span>
           </div>
         </div>
 
@@ -93,10 +99,36 @@ export default function MyClubsPage() {
             {!isMember && (
               <Button
                 size="sm"
+                disabled={joiningClubId === club.id}
+                onClick={async () => {
+                  try {
+                    setJoiningClubId(club.id)
+                    await joinClubInstant(CURRENT_USER_ID, club.id)
+                  } finally {
+                    setJoiningClubId(null)
+                    await Promise.all([refetchUserClubs(), refetchAllClubs()])
+                    await refetchJoinedEvents()
+                    setTabValue("joined")
+                  }
+                }}
                 className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
               >
                 <Plus className="mr-1 h-3 w-3" />
-                Join
+                {joiningClubId === club.id ? "Joining..." : "Join"}
+              </Button>
+            )}
+            {isMember && (
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={async () => {
+                  await leaveClubInstant(CURRENT_USER_ID, club.id)
+                  await Promise.all([refetchUserClubs(), refetchAllClubs()])
+                  await refetchJoinedEvents()
+                  setTabValue("discover")
+                }}
+              >
+                Remove
               </Button>
             )}
           </div>
@@ -167,7 +199,7 @@ export default function MyClubsPage() {
         <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
           <CardContent className="p-6 text-center">
             <div className="text-3xl font-black text-purple-600 mb-2">
-              {userClubs.reduce((sum, club) => sum + club.event_count, 0)}
+              {userClubs.reduce((sum, club) => sum + (club.events_hosted_count || 0), 0)}
             </div>
             <div className="text-sm font-semibold text-purple-700">Total Events</div>
           </CardContent>
@@ -175,7 +207,7 @@ export default function MyClubsPage() {
         <Card className="bg-gradient-to-br from-pink-50 to-pink-100 border-pink-200">
           <CardContent className="p-6 text-center">
             <div className="text-3xl font-black text-pink-600 mb-2">
-              {userClubs.reduce((sum, club) => sum + club.member_count, 0)}
+              {userClubs.reduce((sum, club) => sum + (club.members_count || 0), 0)}
             </div>
             <div className="text-sm font-semibold text-pink-700">Network Size</div>
           </CardContent>
@@ -184,7 +216,9 @@ export default function MyClubsPage() {
           <CardContent className="p-6 text-center">
             <div className="text-3xl font-black text-green-600 mb-2">
               {userClubs.length > 0
-                ? (userClubs.reduce((sum, club) => sum + club.rating, 0) / userClubs.length).toFixed(1)
+                ? (
+                    userClubs.reduce((sum, club) => sum + (club.credibility_score || 0), 0) / userClubs.length
+                  ).toFixed(1)
                 : "0.0"}
             </div>
             <div className="text-sm font-semibold text-green-700">Avg Rating</div>
@@ -193,7 +227,7 @@ export default function MyClubsPage() {
       </div>
 
       {/* Tabs */}
-      <Tabs defaultValue="joined" className="space-y-6">
+      <Tabs value={tabValue} onValueChange={setTabValue} className="space-y-6">
         <TabsList className="grid w-full grid-cols-2 max-w-md">
           <TabsTrigger value="joined" className="font-semibold">
             My Clubs ({userClubs.length})
@@ -229,11 +263,72 @@ export default function MyClubsPage() {
               </Link>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredUserClubs.map((club) => (
-                <ClubCard key={club.id} club={club} isMember={true} />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredUserClubs.map((club) => (
+                  <ClubCard key={club.id} club={club} isMember={true} />
+                ))}
+              </div>
+
+              <div className="space-y-4">
+                <h2 className="text-2xl font-bold text-slate-900">Events from your clubs</h2>
+                {eventsLoading ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                      <ClubSkeleton key={i} />
+                    ))}
+                  </div>
+                ) : joinedClubsEvents.length === 0 ? (
+                  <div className="text-center py-8 text-slate-600">No events yet from your clubs.</div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {joinedClubsEvents.map((event) => (
+                      <Card key={event.id} className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-slate-200 hover:border-indigo-200 hover:-translate-y-1">
+                        <CardHeader className="p-0 relative overflow-hidden">
+                          <div className="h-32 bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-50 flex items-center justify-center relative">
+                            <div className="text-5xl opacity-20">📅</div>
+                            <div className="absolute top-3 left-3">
+                              <Badge variant="secondary" className="bg-white/90 text-slate-700">
+                                {event.club?.name}
+                              </Badge>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent className="p-6 space-y-4">
+                          <div className="space-y-2">
+                            <h3 className="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-2">
+                              {event.title}
+                            </h3>
+                            <p className="text-sm text-slate-600 line-clamp-2">{event.description}</p>
+                          </div>
+                          <div className="flex items-center justify-between pt-4 border-t border-slate-100 text-sm text-slate-600">
+                            <div className="flex items-center space-x-4">
+                              <div className="flex items-center space-x-1">
+                                <Calendar className="h-4 w-4" />
+                                <span>{new Date(event.start_date).toLocaleDateString()}</span>
+                              </div>
+                              <div className="flex items-center space-x-1">
+                                <Users className="h-4 w-4" />
+                                <span>
+                                  {event.current_participants}
+                                  {event.max_participants && `/${event.max_participants}`} registered
+                                </span>
+                              </div>
+                            </div>
+                            <Link href={`/dashboard/student/events/${event.id}`}>
+                              <Button variant="outline" size="sm" className="group bg-transparent">
+                                View Details
+                                <ExternalLink className="ml-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                              </Button>
+                            </Link>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </>
           )}
         </TabsContent>
 
